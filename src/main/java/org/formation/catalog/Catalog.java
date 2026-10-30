@@ -1,5 +1,7 @@
 package org.formation.catalog;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.formation.catalog.internal.CoffeeEntity;
 import org.formation.catalog.internal.CoffeeRepository;
@@ -20,4 +22,13 @@ public class Catalog {
         events.publishEvent(new CoffeeCreated(saved.getId(), saved.getName()));
         return saved.getId();
     }
+
+    @Transactional(readOnly = true)
+    public List<CoffeeView> findAll() {
+        return repository.findAll().stream()
+                .map(c -> new CoffeeView(c.getId(), c.getName(), c.getPrice()))
+                .toList();
+    }
+
+    public record CoffeeView(Long id, String name, int price) {}
 }
